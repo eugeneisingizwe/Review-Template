@@ -1,0 +1,17 @@
+{
+  "name": "review-template",
+  "version": "1.0.0",
+  "description": "In this project I am creating a review template where users are able to negative through the webpage and create a review with their name. I am creating a one wildcard route to serve up a 404 page, as diagnostics route for logging failed form validation.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "uuid": "^9.0.1"
+  }
+}
