@@ -5,7 +5,7 @@ const fbBtn = document.getElementById("feedback-btn");
 fbBtn.addEventListener("click" , (e) => {
     e.preventDefault;
 
-    window.location.href = "./reviews";
+    window.location.href = "/reviews";
 
 });
 
@@ -14,7 +14,7 @@ const createCard = (review) => {
 
     const cardEl = document.createElement("div");
     cardEl.classList.add("card", "mb-3", "m-3");
-    cardEl.setAttribute("key", review.tip_id);
+    cardEl.setAttribute("key", review.review_id);
 
     //create card header 
 
@@ -45,15 +45,30 @@ const createCard = (review) => {
 };
 
 //get a list of existing reviews from the seriver 
+const getReviews = () => 
+    fetch("api/reviews", {
+        method: "GET",
+        headers: {
+            "content-Type" : "application/json",
+    },
+    //body: Json.stringfify(data)
+})
+.then((response) => response.json())
+.then((data) => data)
+.catch((error) => {
+    console.log("error:", error);
+});
 
+// Post a new review to the page
 const postReivew = (review) => 
 fetch("/api/reviews" , {
     method: "POST",
     headers: {
-        "content-Type" : "application/js"
+        "content-Type" : "application/json"
     },
 
     body: JSON.stringify(review),
+    
 }).then((reponse) => reponse.json())
   .then((data) => {
     alert(data);

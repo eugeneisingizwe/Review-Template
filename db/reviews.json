@@ -3,27 +3,27 @@
         "username": "Ab",
         "topic": "Front-end",
         "review": "Your CCS styling can honestly use more work. The issue I noticed was that app not being properly used for mobile",
-        "tip_id": "3fe5d166-2f9e-4e3d-87a7-25a561207c6c"
+        "review_id": "3fe5d166-2f9e-4e3d-87a7-25a561207c6c"
     },
     {
         "username": "Sarah",
         "topic": "Front-end",
         "review": "Make your application accessible by adding alt properties to elements",
-        "tip_id": "ca0616fa-f603-4d85-a9c6-fa62c73a9bf9"
+        "review_id": "ca0616fa-f603-4d85-a9c6-fa62c73a9bf9"
     },
     {
         "username": "Ace",
         "review": "Don't use three different fonts on the same page",
         "topic": "Front-end",
-        "tip_id": "c83c28af-9197-4f2f-b119-03236ecfc0b6"
+        "review_id": "c83c28af-9197-4f2f-b119-03236ecfc0b6"
     },
     {
-        "tip_id": "960d7564-03e2-4c3e-9be8-9fe546050c61"
+        "review_id": "960d7564-03e2-4c3e-9be8-9fe546050c61"
     },
     {
         "username": "Sergio",
         "review": "Nice job with all the application. I am able to access all of them",
         "topic": "back-end",
-        "tip_id": "7ac6feca-6021-426a-ba51-d0ed9d165a1d"
+        "review_id": "7ac6feca-6021-426a-ba51-d0ed9d165a1d"
     }
 ]
