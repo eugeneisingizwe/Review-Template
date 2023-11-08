@@ -1,194 +1,168 @@
-const tipForm = document.getElementById("tip-form");
-const tipsContainer = document.getElementById("tip-container");
-const fbBtn = document.getElementById("feedback-btn");
+const tipForm = document.getElementById('tip-form');
+const tipsContainer = document.getElementById('tip-container');
+const fbBtn = document.getElementById('feedback-btn');
 
-fbBtn.addEventListener("click" , (e) => {
-    e.preventDefault;
-
-    window.location.href = "/reviews";
-
+fbBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  window.location.href = '/feedback';
 });
 
-const createCard = (review) => {
-    //create card 
+const createCard = (tip) => {
+  // Create card
+  const cardEl = document.createElement('div');
+  cardEl.classList.add('card', 'mb-3', 'm-3');
+  cardEl.setAttribute('key', tip.tip_id);
 
-    const cardEl = document.createElement("div");
-    cardEl.classList.add("card", "mb-3", "m-3");
-    cardEl.setAttribute("key", review.review_id);
+  // Create card header
+  const cardHeaderEl = document.createElement('h4');
+  cardHeaderEl.classList.add(
+    'card-header',
+    'bg-primary',
+    'text-light',
+    'p-2',
+    'm-0'
+  );
+  cardHeaderEl.innerHTML = `${tip.username} </br>`;
 
-    //create card header 
+  // Create card body
+  const cardBodyEl = document.createElement('div');
+  cardBodyEl.classList.add('card-body', 'bg-light', 'p-2');
+  cardBodyEl.innerHTML = `<p>${tip.tip}</p>`;
 
-    const cardHeaderEl = document.createElement("h4");
-    cardHeaderEl.classList.add(
-        "card-header",
-        "bg-primary",
-        "text-light",
-        "p-2",
-        "m-0"
-    );
+  // Append the header and body to the card element
+  cardEl.appendChild(cardHeaderEl);
+  cardEl.appendChild(cardBodyEl);
 
-    cardHeaderEl.innerHTML = `${review.username} </br>`;
-
-    //create card boby
-    const cardBodyEl = document.createElement("div");
-    cardBodyEl.classList.add("card-body", "big-light", "p-2");
-    cardBodyEl.innerHTML = `<p>${review.review}</p>`;
-
-    //Append the header and body to the card element
-    cardEl.appendChild(cardHeaderEl);
-    cardEl.appendChild(cardBodyEl);
-
-    //Append the card element to the tips contianers 
-
-    tipsContainer.appendChild(cardEl);
-
+  // Append the card element to the tips container in the DOM
+  tipsContainer.appendChild(cardEl);
 };
 
-//get a list of existing reviews from the seriver 
-const getReviews = () => 
-    fetch("api/reviews", {
-        method: "GET",
-        headers: {
-            "content-Type" : "application/json",
-    },
-    //body: Json.stringfify(data)
-})
-.then((response) => response.json())
-.then((data) => data)
-.catch((error) => {
-    console.log("error:", error);
-});
-
-// Post a new review to the page
-const postReivew = (review) => 
-fetch("/api/reviews" , {
-    method: "POST",
+// Get a list of existing tips from the server
+const getTips = () =>
+  fetch('/api/tips', {
+    method: 'GET', // or 'PUT'
     headers: {
-        "content-Type" : "application/json"
+      'Content-Type': 'application/json',
     },
-
-    body: JSON.stringify(review),
-    
-}).then((reponse) => reponse.json())
-  .then((data) => {
-    alert(data);
-    createCard(review)
+    // body: JSON.stringify(data),
   })
+    .then((response) => response.json())
+    .then((data) => data)
     .catch((error) => {
-        console.error("error" , error);
+      console.error('Error:', error);
     });
 
+// Post a new tip to the page
+const postTip = (tip) =>
+  fetch('/api/tips', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(tip),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      alert(data);
+      createCard(tip);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 
-//When the page loads get all the reviews 
+// When the page loads, get all the tips
+getTips().then((data) => data.forEach((tip) => createCard(tip)));
 
-getReviews().then((data) => data.forEach((review) => createCard(review)));
+// Function to validate the tips that were submitted
+const validateTip = (newTip) => {
+  const { username, topic, tip } = newTip;
 
-//fucntion to validate the reviews that were submitted 
+  // Object to hold our error messages until we are ready to return
+  const errorState = {
+    username: '',
+    tip: '',
+    topic: '',
+  };
 
-const validateReview = (newReview) => {
-    const {username, topic, review} = newReview;
+  // Bool value if the username is valid
+  const utest = username.length >= 4;
+  if (!utest) {
+    errorState.username = 'Invalid username!';
+  }
 
-    //Object to hold our error messages until we are ready to return
+  // Bool value to see if the tip being added is at least 15 characters long
+  const tipContentCheck = tip.length > 15;
+  if (!tipContentCheck) {
+    errorState.tip = 'Tip must be at least 15 characters';
+  }
 
-    const errorState = {
-        username: "",
-        review: "",
-        topic:"",
-    };
+  // Bool value to see if the topic is either UX or UI
+  const topicCheck = topic.includes('UX' || 'UI');
+  if (!topicCheck) {
+    errorState.topic = 'Topic not relevant to UX or UI';
+  }
 
-    //bool value if the username is valid 
+  const result = {
+    isValid: !!(utest && tipContentCheck && topicCheck),
+    errors: errorState,
+  };
 
-    const utest = username.length >= 4;
-    if(!utest) {
-        errorState.username = "Invalid username!";
-    }
-
-    //Bool value to see if the reviews being added is at least 15 characters long 
-
-    const reviewContentCheck = review.length > 15;
-    if (!reviewContentCheck) {
-        errorState.review = "The review muust be at least 15 characters";
-    }
-
-    //Bool value to see if the topic is either front-end or Back-end 
-
-    const topicCheck = topic.includes("back-end" || "front-end");
-    if(!topicCheck) {
-        errorState.topic ="Review is not relevant to front-end or back-end";
-    }
-
-    const result = {
-        isValid: !!(utest && reviewContentCheck && topicCheck),
-        errors: errorState,
-    };
-
-    //return object with a isValid boolean and an errors object for nay errors that may exist 
-    return result;
-}
+  // Return result object with a isValid boolean and an errors object for any errors that may exist
+  return result;
+};
 
 // Helper function to deal with errors that exist in the result
 
 const showErrors = (errorObj) => {
-    const errors = Object.values(errorObj);
-    errors.forEach((error) => {
-      if (error.length > 0) {
-        alert(error);
-      }
-    });
-  };
+  const errors = Object.values(errorObj);
+  errors.forEach((error) => {
+    if (error.length > 0) {
+      alert(error);
+    }
+  });
+};
 
-  // Helper function to send a POST request to the diagnoistics route
-
-  const submitDiagnistics =  (submissionObj) => {
-    fetch("/api/diagnistics/josn", {
-        method: "POST",
-        headers: {
-            "content-type" : "application/json",
-        },
-
-        body: JSON.stringify(submissionObj),
-    })
+// Helper function to send a POST request to the diagnostics route
+const submitDiagnostics = (submissionObj) => {
+  fetch('/api/diagnostics', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(submissionObj),
+  })
     .then((response) => response.json())
     .then(() => showErrors(submissionObj.errors))
     .catch((error) => {
-        console.error("Error:", error);
+      console.error('Error:', error);
     });
+};
+
+// Function to handle when a user submits the feedback form
+const handleFormSubmit = (e) => {
+  e.preventDefault();
+  console.log('Form submit invoked');
+
+  // Get the value of the tip and save it to a variable
+  const tipContent = document.getElementById('tipText').value;
+
+  // get the value of the username and save it to a variable
+  const tipUsername = document.getElementById('tipUsername').value.trim();
+
+  // Create an object with the tip and username
+  const newTip = {
+    username: tipUsername,
+    topic: 'UX',
+    tip: tipContent,
   };
 
-  //function to handle when a user submits the feedback form
+  // Run the tip object through our validator function
+  const submission = validateTip(newTip);
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    console.log("From submit invked");
+  // If the submission is valid, post the tip. Otherwise, handle the errors.
+  return submission.isValid ? postTip(newTip) : submitDiagnostics(submission);
+};
 
-    //get value of the review and save to a varible 
-
-    const reviewContent = document.getElementById("tipText").value;
-    
-    //get the value of the isername and save it to a variable 
-    const tipUsername = document.getElementById("tipUsername").value;
-
-    //create an object with the review and username 
-
-    const newReview ={
-        username: tipUsername,
-        topic: "back-end",
-        review: reviewContent
-
-    };
-
-    // Run the review object through our validator function
-
-    const submission = validateReview(newReview);
-
-    //if the subussuib is valud, post the review. Otherwise, handle the errors.
-
-    return submission.isValid ? postReivew(newReview) : submitDiagnistics(submission);
-  };
-
-  //Listen for when the form is submittd 
-
-  tipForm.addEventListener("submit" ,handleFormSubmit);
-
-
+// Listen for when the form is submitted
+tipForm.addEventListener('submit', handleFormSubmit);
 
